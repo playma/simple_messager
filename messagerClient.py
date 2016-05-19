@@ -26,13 +26,13 @@ def handle_send():
 
 def handle_receive():
     while True:
-        response = client.recv(4096)
+        response = client.recv(1024)
         re = response.decode('ascii')
         print(re)
 
         if re == "password:":
             os.system("stty -echo")
-            response = client.recv(4096)
+            response = client.recv(1024)
             re = response.decode('ascii')
             print(re)
             if re == "Wrong password!":
@@ -45,14 +45,22 @@ def handle_receive():
         elif re == "### Agree to transmite file.":
             global filename
             print(filename)
+            
+            fileSize = os.path.getsize(filename)
+            print ("filesize: " + str(fileSize))
             f = open(filename,'rb')
             l = f.read(1024)
-            maxval = 100
-                
+            i = 0
+            print("0% of " + filename + " transmitted....\r", end="")
             while (l):
                 client.send(l)
                 l = f.read(1024)
-
+                i = i + 1
+                percent = 1024*i / fileSize * 100
+                if 1024*i > fileSize: 
+                    percent = 100
+                print( str(percent) + "% of filename transmitted....\r", end="")
+            print( "100% of filename transmitted....")
             f.close()
             stop = "EOF"
             stop = stop.encode('ascii')
@@ -65,13 +73,15 @@ def handle_receive():
         elif re == "### Start to transimate file.":
             file = open('myTransfer', 'wb')
             while True:
-                print("in loop")
+                ##print("in loop")
                 data = client.recv(1024)
-                print(data)
-                if data == 'EOF':  
+                msg = data.decode('ascii')
+                ##print("client receiveve: " + msg)
+                if msg == "EOF":  
                     print("match eof")
                     break;
                 print("writefile")
+
                 file.write(data)
             
             file.flush()  

@@ -136,7 +136,7 @@ def handle_client(client_socket, client_ip, client_port):
     # Logined
     
     while True:
-        response = client_socket.recv(4096)
+        response = client_socket.recv(1024)
         re = response.decode('ascii')
         #print("# Received: " + re)
 
@@ -215,13 +215,12 @@ def handle_client(client_socket, client_ip, client_port):
                                                 clientSocketMsg(client_socket,  "### Agree to transmite file.")
                                                 
                                                 while True:
-                                                    data = client_socket.recv(1024)
-                                                    
+                                                    data = client_socket.recv(1024)                                                   
                                                     data = data.decode('ascii')
-                                                    print(data)
+                                                    ##print("receieve====" + data)
                                                     filebox[friendUid].append(data)
-                                                        #client_socket.send(data)
                                                     if data == "EOF":
+                                                        print("=============server match eof================")
                                                         print(filebox[friendUid])
                                                         break;
                                                 flag = 1
@@ -285,7 +284,7 @@ def handle_client(client_socket, client_ip, client_port):
                         clientSocketMsg(client_socket, "### Start conversion with " + friendName + ".")
                         clientSocketMsg(client_socket, "##############################################")
                         while True:
-                            response = client_socket.recv(4096)
+                            response = client_socket.recv(1024)
                             re = response.decode('ascii')
                             if re == "end conversion":
                                 print("# user " + username +  " end conversion with " + friendName + ".")
@@ -332,7 +331,7 @@ def handle_listen(client_socket, uid):
         if filebox[uid]:
             clientSocketMsg(client_socket, "### Start to transimate file.")
             for block in filebox[uid]:
-                print("sendblock")
+                #print("sendblock:" + block)
                 clientSocketMsg(client_socket, block)
                 filebox[uid].pop(0)
 
