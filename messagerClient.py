@@ -77,10 +77,16 @@ def handle_receive():
                 data = client.recv(1024)
                 msg = data.decode('ascii')
                 ##print("client receiveve: " + msg)
-                if msg == "EOF":  
+                if msg.find("### Start to transimate file.") != -1:  
+                    msg = msg.replace("### Start to transimate file.", "")
+                    data = msg.encode('ascii')
+                if msg.find("EOF") != -1:  
                     print("match eof")
+                    msg = msg.replace("EOF", "")
+                    data = msg.encode('ascii')
+                    file.write(data)
                     break;
-                print("writefile")
+                #print("writefile")
 
                 file.write(data)
             
