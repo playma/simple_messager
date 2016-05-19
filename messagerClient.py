@@ -54,6 +54,9 @@ def handle_receive():
                 l = f.read(1024)
 
             f.close()
+            stop = "EOF"
+            stop = stop.encode('ascii')
+            client.send(stop)
             print("end of file transmission")
 
         elif re[0:15] == "### Denied from":
@@ -61,15 +64,20 @@ def handle_receive():
 
         elif re == "### Start to transimate file.":
             file = open('myTransfer', 'wb')
-            #while True:
-            data = client.recv(4096)
-            if data:
+            while True:
+                print("in loop")
+                data = client.recv(1024)
                 print(data)
+                if data == 'EOF':  
+                    print("match eof")
+                    break;
+                print("writefile")
                 file.write(data)
-                #else:
-                file.close()
-                print("finished.")
-                    #break
+            
+            file.flush()  
+            file.close() 
+            print("download finished") 
+
 
         elif re=="### Goodbye !":
             global exit

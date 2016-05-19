@@ -201,7 +201,7 @@ def handle_client(client_socket, client_ip, client_port):
                             
                             flag = 0
                             while True:
-                                print("in while loop")
+                                #print("in while loop")
                                 
                                 if flag == 1:
                                     print("break2")
@@ -216,14 +216,16 @@ def handle_client(client_socket, client_ip, client_port):
                                                 
                                                 while True:
                                                     data = client_socket.recv(1024)
-                                                    if data:
-                                                        data = data.decode('ascii')
-                                                        print(data)
-                                                        filebox[friendUid].append(data)
+                                                    
+                                                    data = data.decode('ascii')
+                                                    print(data)
+                                                    filebox[friendUid].append(data)
                                                         #client_socket.send(data)
-                                                    else:
+                                                    if data == "EOF":
+                                                        print(filebox[friendUid])
                                                         break;
                                                 flag = 1
+                                                break;
                                                 #msgbox[uid].pop(0)
                                             elif msg[2] == "deny":
                                                 #msgbox[uid].pop(0)
@@ -330,6 +332,7 @@ def handle_listen(client_socket, uid):
         if filebox[uid]:
             clientSocketMsg(client_socket, "### Start to transimate file.")
             for block in filebox[uid]:
+                print("sendblock")
                 clientSocketMsg(client_socket, block)
                 filebox[uid].pop(0)
 
